@@ -1,0 +1,33 @@
+// Name:CPU
+// Function: 
+// iKEY[0] is the reset input, 
+// iKEY[1] is the clock,
+// iSW[17] is the Run input,
+// iSW[15-0] are the Din
+// bus appears on oLEDR[15-0],
+// done appears on oLEDR[17].
+// Author: caojian
+module cpu (iKEY, iSW, oLEDR);
+	input [1:0] iKEY;
+	input [17:0] iSW;
+	output [17:0] oLEDR;	
+
+	wire Resetn, Manual_Clock, Run, Done;
+	wire [15:0] DIN, Bus;
+
+	assign Resetn = iKEY[0];
+	assign Manual_Clock = iKEY[1];	
+		// Note: can't use name Clock because this is defined as
+		// the 50 MHz Clock coming into the FPGA from the board
+	assign DIN = iSW[15:0];
+	assign Run = iSW[17];
+
+	// module proc(DIN, Resetn, Clock, Run, Done, Bus);
+	proc U1 (DIN, Resetn, Manual_Clock, Run, Done, Bus);
+
+	assign oLEDR[15:0] = Bus;
+	assign oLEDR[16] = 1'b0;
+	assign oLEDR[17] = Done;
+
+endmodule
+
